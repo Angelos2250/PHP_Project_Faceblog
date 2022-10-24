@@ -1,0 +1,71 @@
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+CREATE DATABASE IF NOT EXISTS `faceblog` DEFAULT CHARACTER SET latin1 COLLATE latin1_general_ci;
+USE `faceblog`;
+
+CREATE TABLE `blogs` (
+  `blogsId` int(11) NOT NULL,
+  `usersId` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `text` TEXT NOT NULL,
+  `date` DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `users` (
+  `usersId` int(11) NOT NULL,
+  `displayName` varchar(255) NOT NULL,
+  `userName` varchar(255) NOT NULL,
+  `passwordHash` char(60) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `ratings` (
+  `ratingsId` int(11) NOT NULL,
+  `blogsId` int(11) NOT NULL,
+  `usersId` int(11) NOT NULL,
+  `rating` BOOLEAN
+
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `blogs`
+  ADD PRIMARY KEY (`blogsId`),
+  ADD KEY `userId` (`usersId`);
+
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`usersId`),
+  ADD UNIQUE KEY `userName` (`userName`);
+
+ALTER TABLE `ratings`
+  ADD PRIMARY KEY (`ratingsId`),
+  ADD KEY `userId` (`usersId`),
+  ADD KEY `blogsId` (`blogsId`);
+
+
+ALTER TABLE `blogs`
+  MODIFY `blogsId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+ALTER TABLE `users`
+  MODIFY `usersId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+ALTER TABLE `ratings`
+  MODIFY `ratingsId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+ALTER TABLE `blogs`
+  ADD CONSTRAINT `blogs_ibfk_1` FOREIGN KEY (`usersId`) REFERENCES `users` (`usersId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `ratings`
+  ADD CONSTRAINT `ratings_ibfk_1` FOREIGN KEY (`usersId`) REFERENCES `users` (`usersId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `ratings_ibfk_2` FOREIGN KEY (`blogsId`) REFERENCES `blogs` (`blogsId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+COMMIT;
+
+INSERT INTO `users` (`usersId`,`displayName`,`userName`, `passwordHash`) VALUES
+(1, 'scr4','admin','$2y$10$0dhe3ngxlmzgZrX6MpSHkeoDQ.dOaceVTomUq/nQXV0vSkFojq.VG');
+
+INSERT INTO `blogs` (`blogsId`, `usersId`, `title`, `text`, `date`) VALUES
+(1, 1, 'This is the first ever Blog written in Faceblog', 'This is a test yeeeeeeeeeeee', now()),
+(2, 1, 'This is the second ever Blog written in Faceblog', 'This is a second test yeeeeeeeeeeee', now()),
+(3, 1, 'This is the third ever Blog written in Faceblog', 'This is a third test yeeeeeeeeeeee', now());
+
+INSERT INTO `ratings` (`ratingsId`, `blogsId`, `usersId`, `rating`) VALUES
+(1, 1, 1, TRUE),
+(2, 2, 1, TRUE);
